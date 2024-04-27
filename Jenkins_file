@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://192.168.1.20'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'ansible-playbook -i inventory WebServerSetup.yml'
+            }
+        }
+    }
+    post {
+        failure {
+            emailext subject: "Pipeline Failed: ${env.JOB_NAME}",
+                      body: "Pipeline failed for the following reason: ${currentBuild.currentResult}\n\n" +
+                            "List of users in webAdmins group: DevTeam, OpsTeam\n\n" +
+                            "Date of pipeline execution: ${currentBuild.startTimeString()}",
+                      to: 'ahmedans53@gmail.com'
+        }
+    }
+}
