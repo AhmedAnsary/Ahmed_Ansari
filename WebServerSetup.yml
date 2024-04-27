@@ -1,0 +1,18 @@
+---
+- name: Install and start Apache HTTP Server
+  hosts: vm3
+  become: yes
+
+  tasks:
+    - name: Install Apache HTTP Server
+      yum:
+        name: httpd
+        state: present
+      notify: Start Apache service
+
+  handlers:
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
